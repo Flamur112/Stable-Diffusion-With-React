@@ -1,10 +1,11 @@
-import { Controller, Get, Post, HttpCode, Redirect, Param, HostParam, Body, Patch, Delete, Query, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Patch, Delete, Query, ParseIntPipe, ValidationPipe } from '@nestjs/common';
 import { UsersService }  from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users') // /users
 export class UsersController {
-
-    constructor(private readonly usersService: UsersService) {} // curly braced there to not see all red shit
+    constructor(private readonly usersService: UsersService) {} // allows for the UsersService logic to be used within the whole controller freely
 
     @Get() // GET /users r /users?role=value&age=42 // FILTERATION LOGIC
     findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN'){ // role?: is getting assigned the variable of ThisWillShowInURL which basically means it is getting assigned the key-value pairs of it and making it optional to have values after it. In the findAll method, role?: ,the ? stands for optional so that if a parameter is declared without '?' like 'role: string' then it means that when you call the function or method you must provide a 'role'.
@@ -17,13 +18,13 @@ export class UsersController {
     }
 
     @Post() // Allows for this function to now be able to send data to server
-    create(@Body() user: { name: string, email: string,  role: 'INTERN' | 'ENGINEER' | 'ADMIN' }) { // The @Body says that anything after that decorator @Body() is what is going to be sent to the server
-        return this.usersService.create(user) // turns data from client side to server side
+    create(@Body(ValidationPipe) CreateUserDto: CreateUserDto ) { // The @Body says that anything after that decorator @Body() is what is going to be sent to the server
+        return this.usersService.create(CreateUserDto) // turns data from client side to server side
     }
 
     @Patch(':id') // PATCH /users/:id
-    update(@Param('id', ParseIntPipe)id: number, @Body() userUpdate: { name?: string, email?: string,  role?: 'INTERN' | 'ENGINEER' | 'ADMIN' }){ // userUpdate is a variable name the : {} gives userUpdate a type object
-        return this.usersService.update(id, userUpdate)
+    update(@Param('id', ParseIntPipe) id: number, @Body(ValidationPipe) updateUserDto: UpdateUserDto) { // userUpdate is a variable name the : {} gives userUpdate a type object
+        return this.usersService.update(id, updateUserDto)
     }
 
     @Delete(':id') // DELETE /users/:id
