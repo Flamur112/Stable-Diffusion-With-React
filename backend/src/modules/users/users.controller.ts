@@ -7,6 +7,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersController {
     constructor(private readonly usersService: UsersService) {} // allows for the UsersService logic to be used within the whole controller freely
 
+
+
     @Get() // GET /users r /users?role=value&age=42 // FILTERATION LOGIC
     findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN'){ // role?: is getting assigned the variable of ThisWillShowInURL which basically means it is getting assigned the key-value pairs of it and making it optional to have values after it. In the findAll method, role?: ,the ? stands for optional so that if a parameter is declared without '?' like 'role: string' then it means that when you call the function or method you must provide a 'role'.
         return this.usersService.findAll(role)
