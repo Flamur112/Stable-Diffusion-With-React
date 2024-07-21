@@ -1,9 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
----
+const response = await fetch('http://localhost:3001/users');
+const users = await response.json();
 
-<Layout title="Welcome to Astro.">
+---
+ 
+<Layout title="Astro CRUD">
 	<main>
 		<svg
 			class="astro-a"
@@ -33,35 +35,55 @@ import Card from '../components/Card.astro';
 				</linearGradient>
 			</defs>
 		</svg>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
+		<h1>Astro <span class="text-gradient">CRUD</span></h1>
 		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
+			Create Users: <button id="post-button">Post</button>
+			<br>
+			Get Users Data: <button id="get-button">Get</button>
+			<br>
+			Update Users: <button id="update-button">Update</button>
+			<br>
+			Delete Users: <button id="delete-button">Delete</button>
 		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community. ❤️"
-			/>
-		</ul>
+		<div id="users-list"></div>
 	</main>
 </Layout>
+
+<script>
+	import { handlePost, handleUpdate, handleDelete } from '../../api.js';
+  
+	const postButton = document.getElementById('post-button');
+	if (postButton) {
+	  postButton.addEventListener('click', handlePost);
+	}
+  
+	const getButton = document.getElementById('get-button');
+if (getButton) {
+  getButton.addEventListener('click', async () => {
+    const response = await fetch('http://localhost:3001/users');
+    const users: { id: number; name: string }[] = await response.json();
+    const usersList = document.getElementById('users-list');
+    if (usersList) {
+      usersList.innerHTML = '';
+      users.forEach((user) => {
+        const userElement = document.createElement('div');
+        userElement.textContent = `ID: ${user.id}, Name: ${user.name}`;
+        usersList.appendChild(userElement);
+      });
+    }
+  });
+}
+  
+	const updateButton = document.getElementById('update-button');
+	if (updateButton) {
+	  updateButton.addEventListener('click', handleUpdate);
+	}
+  
+	const deleteButton = document.getElementById('delete-button');
+	if (deleteButton) {
+	  deleteButton.addEventListener('click', handleDelete);
+	}
+  </script>
 
 <style>
 	main {
@@ -103,21 +125,6 @@ import Card from '../components/Card.astro';
 		padding: 1.5rem;
 		border-radius: 8px;
 	}
-	.instructions code {
-		font-size: 0.8em;
-		font-weight: bold;
-		background: rgba(var(--accent-light), 12%);
-		color: rgb(var(--accent-light));
-		border-radius: 4px;
-		padding: 0.3em 0.4em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent-light));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 2rem;
-		padding: 0;
-	}
+
+
 </style>
