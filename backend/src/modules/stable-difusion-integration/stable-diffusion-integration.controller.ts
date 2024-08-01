@@ -1,5 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { GenerateImageDto } from './generate-image.dto';
+import { GenerateImageDto } from '../../utils/generate-image.dto';
 import { StableDiffusionIntegrationService } from './stable-diffusion-integration.service';
 
 @Controller('stable-difusion-integration')
