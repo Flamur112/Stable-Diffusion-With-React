@@ -1,3 +1,6 @@
+# Ignore backend stable-difsuion-api-images directory
+backend/stable-difsuion-api-images
+
 # compiled output
 /dist
 /node_modules
