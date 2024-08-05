@@ -9,5 +9,3 @@ Built with React, the application provides an intuitive experience, allowing use
 - Visualize the generated images
 
 Explore the capabilities of Stable Diffusion through an easy-to-use interface and see your prompts come to life!
-
-For more details, check out our documentation and stay tuned for updates. 🚀
