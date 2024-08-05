@@ -8,13 +8,35 @@ import { getDataFolderPath, persistData } from '../../utils/file.utils';
 export class StableDiffusionIntegrationService {
     private readonly logger = new Logger(StableDiffusionIntegrationService.name);
 
+    // Define the arrays as private class properties
+    private colors = ['black', 'white', 'brown', 'golden', 'gray', 'red', 'blue', 'green'];
+    private breeds = ['Labrador', 'German Shepherd', 'Golden Retriever', 'Bulldog', 'Poodle', 'Beagle'];
+    private snoutLengths = ['short', 'medium', 'long'];
+    private eyeColors = ['brown', 'blue', 'green', 'amber'];
+    private eyeShapes = ['round', 'almond', 'slanted'];
+    private coatLengths = ['short', 'medium', 'long'];
+    private nailColors = ['black', 'white', 'pink'];
+    private earLengths = ['short', 'medium', 'long'];
+    private earShapes = ['pointed', 'floppy', 'rounded'];
+    private bodyShapes = ['slim', 'muscular', 'stocky'];
+    private legLengths = ['short', 'medium', 'long'];
+    private legBuilds = ['thin', 'muscular', 'average'];
+    private tailLengths = ['short', 'medium', 'long'];
+    private tailShapes = ['straight', 'curled', 'fluffy'];
+    private tailFeathers = ['none', 'sparse', 'bushy'];
+    private feetSizes = ['small', 'medium', 'large'];
+
+    private pose = 'standing looking left';
+    private style = 'wireframe and hyper-realistic';
+    private background = 'completely black';
+
     constructor(private readonly httpService: HttpService) {}
 
     private getRandomElement<T>(array: T[]): T {
         return array[Math.floor(Math.random() * array.length)];
     }
 
-    async generateImage(data: GenerateImageDto) {
+    async generateImage(data: GenerateImageDto): Promise<string> {
         const engineId = 'stable-diffusion-xl-1024-v1-0';
         const url = `https://api.stability.ai/v1/generation/${engineId}/text-to-image`;
         const headers = {
@@ -23,79 +45,44 @@ export class StableDiffusionIntegrationService {
             'Authorization': `Bearer ${process.env.STABILITY_API_KEY}`,
         };
 
-        const type = data.type as 'dog' | 'cat';
-        
-        // Define lists of possible values
-        const colors = type === 'dog' ? ["black and white", "brown", "golden", "gray", "spotted"] : ["gray", "black", "white", "orange", "tabby"];
-        const breeds = type === 'dog' ? ["Labrador Retriever", "German Shepherd", "Golden Retriever", "Bulldog", "Beagle", "Poodle", "Rottweiler", "Yorkshire Terrier", "Dachshund", "Siberian Husky"] : ["Persian", "Maine Coon", "Siamese", "Sphynx", "Bengal"];
-        const snoutLengths = type === 'dog' ? ["small", "medium", "large"] : [];
-        const eyeColors = type === 'dog' ? ["red", "blue", "green", "yellow", "brown"] : [];
-        const eyeShapes = type === 'dog' ? ["almond-shaped", "round", "oval", "hooded", "wide-set", "close-set", "droopy", "raised"] : [];
-        const coatLengths = type === 'dog' ? ["short", "medium", "long", "curly", "silky", "fluffy"] : [];
-        const nailColors = type === 'dog' ? ["white", "black"] : [];
-        const earLengths = type === 'dog' ? ["short", "medium", "long"] : [];
-        const earShapes = type === 'dog' ? ["erect", "floppy", "semi-erect", "folded", "hanging", "cropped", "feathered"] : [];
-        const bodyShapes = type === 'dog' ? ["slender", "muscular", "stocky"] : [];
-        const legLengths = type === 'dog' ? ["short", "medium", "long"] : [];
-        const legBuilds = type === 'dog' ? ["lean", "muscular", "stocky"] : [];
-        const tailLengths = type === 'dog' ? ["short", "medium", "long"] : [];
-        const tailShapes = type === 'dog' ? ["curved", "straight", "bent"] : [];
-        const tailFeathers = type === 'dog' ? ["none", "feathered", "plume-like"] : [];
-        const feetSizes = type === 'dog' ? ["small", "medium", "large"] : [];
-        const feetPads = type === 'dog' ? ["black", "white"] : [];
-        const poses = ["standing, fully in frame, upright. Keep it standing in one position and the same for every other pet generated. Make it Look left."];
-        const lighting = "slightly above normal lighting, allowing features to be visibly seen.";
-        const wires = "detailed, very thin, and nicely organized wireframe visible just above the skin";
-        const style = "a combination of wireframe and realistic elements, with the wireframe being prominent";
-        const background = "Black background. Always keep the background black.";
-
         // Select random attributes
         const fields = {
-            color: this.getRandomElement(colors),
-            breed: this.getRandomElement(breeds),
-            pose: this.getRandomElement(poses),
-            snoutLength: type === 'dog' ? this.getRandomElement(snoutLengths) : undefined,
-            eyeColor: type === 'dog' ? this.getRandomElement(eyeColors) : undefined,
-            eyeShape: type === 'dog' ? this.getRandomElement(eyeShapes) : undefined,
-            coatLength: type === 'dog' ? this.getRandomElement(coatLengths) : undefined,
-            nailColor: type === 'dog' ? this.getRandomElement(nailColors) : undefined,
-            earLength: type === 'dog' ? this.getRandomElement(earLengths) : undefined,
-            earShape: type === 'dog' ? this.getRandomElement(earShapes) : undefined,
-            bodyShape: type === 'dog' ? this.getRandomElement(bodyShapes) : undefined,
-            legLength: type === 'dog' ? this.getRandomElement(legLengths) : undefined,
-            legBuild: type === 'dog' ? this.getRandomElement(legBuilds) : undefined,
-            tailLength: type === 'dog' ? this.getRandomElement(tailLengths) : undefined,
-            tailShape: type === 'dog' ? this.getRandomElement(tailShapes) : undefined,
-            tailFeathers: type === 'dog' ? this.getRandomElement(tailFeathers) : undefined,
-            feetSize: type === 'dog' ? this.getRandomElement(feetSizes) : undefined,
-            feetPads: type === 'dog' ? this.getRandomElement(feetPads) : undefined,
-            lighting: type === 'dog' ? lighting : undefined,
-            wires: type === 'dog' ? wires : undefined,
-            totalPets: "1"
+            color: this.getRandomElement(this.colors),
+            breed: this.getRandomElement(this.breeds),
+            snoutLength: this.getRandomElement(this.snoutLengths),
+            eyeColor: this.getRandomElement(this.eyeColors),
+            eyeShape: this.getRandomElement(this.eyeShapes),
+            coatLength: this.getRandomElement(this.coatLengths),
+            nailColor: this.getRandomElement(this.nailColors),
+            earLength: this.getRandomElement(this.earLengths),
+            earShape: this.getRandomElement(this.earShapes),
+            bodyShape: this.getRandomElement(this.bodyShapes),
+            legLength: this.getRandomElement(this.legLengths),
+            legBuild: this.getRandomElement(this.legBuilds),
+            tailLength: this.getRandomElement(this.tailLengths),
+            tailShape: this.getRandomElement(this.tailShapes),
+            tailFeathers: this.getRandomElement(this.tailFeathers),
+            feetSize: this.getRandomElement(this.feetSizes),
+
+            pose: data.pose || this.pose, // Use pose from DTO or default
+            style: data.style || this.style, // Use style from DTO or default
+            background: data.background || this.background,
         };
 
-        // Create the prompt
-        const promptParts = [data.prompt];
-        Object.entries(fields).forEach(([key, value]) => {
-            if (value) {
-                promptParts.push(`${key}: ${value}`);
-            }
-        });
-
-        promptParts.push(style);
-        promptParts.push(background);
-
-        const fullPrompt = promptParts.join(', ');
+        // Create a natural language prompt
+        const fullPrompt = `Create a single hyper-realistic, wireframed ${fields.color} ${fields.breed} dog in a ${fields.background} background. The dog should be standing and looking left. It should have a ${fields.snoutLength} snout, ${fields.eyeColor} eyes that are ${fields.eyeShape}, a ${fields.coatLength} coat, ${fields.nailColor} nails, ${fields.earLength} ears that are ${fields.earShape}, a ${fields.bodyShape} body, ${fields.legLength} legs that are ${fields.legBuild}, ${fields.tailLength} tail that is ${fields.tailShape} and has ${fields.tailFeathers} feathers, ${fields.feetSize} feet. Make sure the dog is fully framed in the image and position on the right size.`;
 
         const payload = {
             "text_prompts": [
-                { "text": background, "weight": 5 },
-                { "text": style, "weight": 3 },
-                { "text": fields.pose, "weight": 2 },
-                { "text": fullPrompt, "weight": 1 }
+                { "text": fullPrompt, "weight": 12 },  // Adjusted weight
+                { "text": `dog ${fields.pose}`, "weight": 12 },  // Adjusted weight
+                { "text": `${fields.color} dog`, "weight": 12 },  // Adjusted weight
+                { "text": this.style, "weight": 12 },  // Adjusted weight
+                { "text": "black background", "weight": 35 },  // Adjusted weight
             ],
-            "cfg_scale": 12,  // Adjusted for stronger adherence to prompt
-            "seed": 0,
+            "cfg_scale": 35,  // Adjusted cfg_scale
+            "clip_guidance_preset": "SLOWEST",
+            "seed": 0, 
             "steps": 50,
             "samples": 1,
             "height": 1024,
