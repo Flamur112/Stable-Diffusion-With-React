@@ -10,7 +10,7 @@ async function bootstrap() {
 
   // Enable CORS to allow requests from your Astro frontend
   app.enableCors({
-    origin: ['http://localhost:4321'],  // Allowed origins
+    origin: ['http://localhost:3000'],  // Allowed origins
     methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
   });
