@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { UsersModule } from './modules/users/users.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,13 +10,10 @@ async function bootstrap() {
 
   // Enable CORS to allow requests from your Astro frontend
   app.enableCors({
-    origin: ['http://localhost:4321'], // adjust the origin to match your Astro frontend URL
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: ['http://localhost:4321'],  // Allowed origins
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
   });
-
-  // Add the UsersModule to the application
-  app.use('/api', UsersModule);
 
 
   await app.listen(3001);
