@@ -2,7 +2,7 @@
 
 This repository offers a user-friendly web interface for generating images using the powerful Stable Diffusion model. 
 
-Built with React, the application provides an intuitive experience, allowing users to:
+Built with Astro, the application provides an intuitive experience, allowing users to:
 
 - Input prompts
 - Experiment with various parameters
